@@ -5,7 +5,7 @@ from errors import SignInError, NotMediaServerError, NoServerError, UserError
 from helpers import authorize
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./client/dist", static_url_path="/")
 
 # TODO:
 # serve spa
@@ -20,6 +20,7 @@ IMDB_ID = "id"
 # TODO: load from env
 app.config["SECRET_KEY"] = "lI3K6Ga5o57MyP5LgZlz!#11ADDfgaef!??!?!!feafeaEFAEF"
 app.config["SESSION_PERMANENT"] = False
+
 
 
 @app.route('/sign-in', methods=['POST'])
@@ -175,3 +176,8 @@ def add_movies():
 def sign_out():
     session.clear()
     return {"message": "Success"}
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return app.send_static_file("index.html")
