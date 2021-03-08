@@ -13,6 +13,28 @@
         </div>
       </div>
 
+      <div class="action-container">
+        <div v-if="current === 1">
+          <div class="input-group">
+            <h1>Login</h1>
+            <input
+              class="input"
+              type="email"
+              name="email"
+              id="email"
+              placeholder="Email..."
+            />
+            <input
+              class="input"
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Password..."
+            />
+          </div>
+        </div>
+      </div>
+
       <button class="btn" @click="prev" :disabled="prevDisabled">Prev</button>
       <button class="btn" @click="next" :disabled="nextDisabled">Next</button>
     </div>
@@ -57,14 +79,28 @@ export default class Home extends Vue {
 </script>
 
 <style>
+.action-container {
+  margin-top: var(--size-large1);
+  margin-bottom: var(--size-large1);
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
 
 :root {
-  --line-border-fill: hsl(135, 84%, 45%);
-  --line-border-empty: hsla(135, 84%, 45%, 0.2);
+  --line-border-fill: var(--clr-primary);
+  --line-border-empty: var(--clr-gray500);
 }
 
 body {
-  background-color: hsla(135, 84%, 45%, 0.05);
+  background-color: var(--clr-dark);
+  color: var(--clr-light);
   font-family: "Muli", sans-serif;
   display: flex;
   align-items: center;
