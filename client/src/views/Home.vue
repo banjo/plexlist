@@ -14,24 +14,22 @@
       </div>
 
       <div class="action-container">
-        <div v-if="current === 1">
-          <div class="input-group">
-            <h1>Login</h1>
-            <input
-              class="input"
-              type="email"
-              name="email"
-              id="email"
-              placeholder="Email..."
-            />
-            <input
-              class="input"
-              type="password"
-              name="password"
-              id="password"
-              placeholder="Password..."
-            />
-          </div>
+        <div class="input-group" v-if="current === 1">
+          <h1>Login</h1>
+          <input
+            class="input"
+            type="email"
+            name="email"
+            id="email"
+            placeholder="Email..."
+          />
+          <input
+            class="input"
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Password..."
+          />
         </div>
       </div>
 
@@ -91,7 +89,19 @@ export default class Home extends Vue {
 .input-group {
   display: flex;
   flex-direction: column;
+  width: 70%;
 }
+
+.input {
+  margin-top: var(--size-medium1);
+  height: var(--size-large2);
+  border-radius: var(--radius);
+  padding-left: var(--size-medium1);
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
 
 :root {
   --line-border-fill: var(--clr-primary);
