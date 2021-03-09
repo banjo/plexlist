@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, redirect, request, session
+from flask_cors import CORS, cross_origin
 import os
 from plex import Plex
 from errors import SignInError, NotMediaServerError, NoServerError, UserError
@@ -6,9 +7,7 @@ from helpers import authorize
 import json
 
 app = Flask(__name__, static_folder="./client/dist", static_url_path="/")
-
-# TODO:
-# serve spa
+CORS(app)
 
 # constants
 USERNAME = "username"
@@ -24,6 +23,7 @@ app.config["SESSION_PERMANENT"] = False
 
 
 @app.route('/sign-in', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def sign_in():
     data = request.json
 
@@ -54,6 +54,7 @@ def test():
 
 
 @app.route('/get-servers')
+@cross_origin(supports_credentials=True)
 @authorize
 def get_servers():
     username = session[USERNAME]
@@ -65,6 +66,7 @@ def get_servers():
 
 
 @app.route('/choose-server', methods=['POST'])
+@cross_origin(supports_credentials=True)
 @authorize
 def choose_server():
     data = request.json
@@ -91,6 +93,7 @@ def choose_server():
 
 
 @app.route("/get-users")
+@cross_origin(supports_credentials=True)
 @authorize
 def get_users():
     username = session[USERNAME]
@@ -109,6 +112,7 @@ def get_users():
 
 
 @app.route("/scrape-imdb", methods=['POST'])
+@cross_origin(supports_credentials=True)
 @authorize
 def scrape_imdb():
     data = request.json
@@ -141,6 +145,7 @@ def scrape_imdb():
 
 
 @app.route("/add-movies", methods=['POST'])
+@cross_origin(supports_credentials=True)
 @authorize
 def add_movies():
     data = request.json
@@ -172,6 +177,7 @@ def add_movies():
 
 
 @app.route("/sign-out")
+@cross_origin(supports_credentials=True)
 @authorize
 def sign_out():
     session.clear()
