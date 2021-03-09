@@ -110,3 +110,27 @@ export const scrapeImdb = async (id: string): Promise<RequestResponse> => {
         return requestResponse;
     }
 };
+
+export const getUsers = async (
+): Promise<RequestResponse> => {
+    try {
+        const response = await instance.get(`get-users`);
+
+        const requestResponse: RequestResponse = {
+            data: response.data,
+            errorCode: null,
+            errorMessage: null,
+            success: true,
+        };
+        return requestResponse;
+    } catch (error) {
+        const requestResponse: RequestResponse = {
+            data: null,
+            errorCode: error.response.status,
+            errorMessage: error.response.data.error,
+            success: false,
+        };
+
+        return requestResponse;
+    }
+};

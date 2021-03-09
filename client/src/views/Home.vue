@@ -35,6 +35,8 @@
                 </div>
 
                 <div v-if="current === 2" class="input-fields">
+                    <h1>Select server</h1>
+
                     <select
                         class="form-select form-select-lg"
                         aria-label=".form-select-lg example"
@@ -52,6 +54,8 @@
                 </div>
 
                 <div v-if="current === 3" class="input-fields">
+                    <h1>Select IMDB list</h1>
+
                     <input
                         class="input"
                         type="text"
@@ -60,6 +64,51 @@
                         placeholder="IMDb ID..."
                         v-model="imdb"
                     />
+                </div>
+
+                <div v-if="current === 4" class="input-fields">
+                    <h1>Playlist</h1>
+
+                    <button
+                        type="button"
+                        class="btn secondary"
+                        data-toggle="modal"
+                        data-target="#movieModal"
+                    >
+                        See all movies
+                    </button>
+
+                    <input
+                        class="input"
+                        type="text"
+                        name="playlist"
+                        id="playlist"
+                        placeholder="Playlist name..."
+                        v-model="playlist"
+                    />
+
+                    <div class="m-4">
+                        <h3>Users</h3>
+                        <div
+                            class="form-check left-align"
+                            v-for="(user, index) of users"
+                            :key="index"
+                        >
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                :value="user"
+                                id="flexCheckDefault"
+                                v-model="selectedUsers"
+                            />
+                            <label
+                                class="form-check-label"
+                                for="flexCheckDefault"
+                            >
+                                {{ user }}
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -82,6 +131,52 @@
                 ></span>
             </button>
         </div>
+
+        <!-- Modal -->
+        <div
+            class="modal fade"
+            id="movieModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="movieModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="movieModalLabel">Movies</h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            <li
+                                class="list-group-item"
+                                v-for="(movie, index) of movies"
+                                :key="index"
+                            >
+                                {{ movie.title }} ({{ movie.year }})
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -90,6 +185,7 @@ import { Component, Vue } from "vue-property-decorator";
 import {
     chooseServer,
     getServers,
+    getUsers,
     login,
     scrapeImdb,
 } from "../services/request-service";
@@ -99,8 +195,8 @@ import { RequestResponse } from "../models/interfaces";
     components: {},
 })
 export default class Home extends Vue {
-    steps = 4;
-    current = 3;
+    steps = 5;
+    current = 4;
     loading = false;
 
     username = "";
@@ -109,6 +205,23 @@ export default class Home extends Vue {
     selectedServer = "";
     imdb = "";
     movies = [];
+    playlist = "";
+    users = [
+        "albin.tystrand@gmail.com",
+        "corderoy.pihl@gmail.com",
+        "daave.olsson@gmail.com",
+        "emhj0516@fridaskolan.se",
+        "emilsvensson99@hotmail.com",
+        "Evelina.odman@gmail.com",
+        "harald.brandelius@gmail.com",
+        "Jacob.c.westman@gmail.com",
+        "johaan.westerlund@gmail.com",
+        "rob.trollhattan@gmail.com",
+        "sarajuliawestman@gmail.com",
+        "stuganibokenaset@gmail.com",
+        "viktor@kopperod.se",
+    ];
+    selectedUsers = [];
 
     errorMessage = "";
 
@@ -128,6 +241,8 @@ export default class Home extends Vue {
         this.errorMessage = "";
         this.loading = true;
 
+        console.log(this.selectedUsers);
+
         // login
         if (this.current === 1) {
             const response = (await login(
@@ -136,7 +251,7 @@ export default class Home extends Vue {
             )) as RequestResponse;
 
             if (!response.success) {
-                this.errorMessage = response.errorMessage;
+                this.errorMessage = response.errorMessage!;
                 this.loading = false;
                 return;
             }
@@ -144,7 +259,7 @@ export default class Home extends Vue {
             const servers = (await getServers()) as RequestResponse;
 
             if (!servers.success) {
-                this.errorMessage = response.errorMessage;
+                this.errorMessage = response.errorMessage!;
                 this.loading = false;
                 return;
             }
@@ -167,13 +282,21 @@ export default class Home extends Vue {
             const response = (await scrapeImdb(this.imdb)) as RequestResponse;
 
             if (!response.success) {
-                this.errorMessage = response.errorMessage;
+                this.errorMessage = response.errorMessage!;
                 this.loading = false;
                 return;
             }
 
+            const users = (await getUsers()) as RequestResponse;
+
+            if (!users.success) {
+                this.errorMessage = response.errorMessage!;
+                this.loading = false;
+                return;
+            }
+
+            this.users = users.data;
             this.movies = response.data;
-            console.log(this.movies);
         }
 
         this.current++;
@@ -230,6 +353,14 @@ export default class Home extends Vue {
     color: #d8000c;
     background-color: #ffbaba;
     width: 70%;
+}
+
+.modal-dialog {
+    color: black;
+}
+
+.left-align {
+    text-align: left;
 }
 
 :root {
@@ -315,6 +446,10 @@ body {
     margin: var(--size-small3);
     font-size: inherit;
     transition: 0.1s;
+}
+
+.secondary {
+    background-color: var(--clr-secondary);
 }
 
 .btn:active {
