@@ -102,7 +102,10 @@ class Plex:
             movie_list.append(temp)
 
         # create playlist
-        playlist = self.server.createPlaylist(name, movie_list)
+        playlist = None
+        
+        if (len(movie_list) > 0):
+            playlist = self.server.createPlaylist(name, movie_list)
 
         return playlist, failed_movies
 

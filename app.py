@@ -152,9 +152,9 @@ def add_movies():
     if (not data):
         return {"error": "You need to include movies, playlist name and users"}, 400
 
-    movie_list = json.loads(data["movies"])
+    movie_list = data["movies"]
     name = data["name"]
-    users = json.loads(data["users"])
+    users = data["users"]
 
     if (not movie_list or not name or not users):
         return {"error": "You need to include movies, playlist name and users"}, 400
@@ -171,7 +171,9 @@ def add_movies():
     plex_server.add_resource_by_name(server)
     plex_server.connect()
     playlist, failed_movies = plex_server.add_playlist(name, movie_list)
-    plex_server.copy_to_users(playlist, users)
+
+    if (len(users) > 0):
+        plex_server.copy_to_users(playlist, users)
 
     return jsonify(failed_movies)
 

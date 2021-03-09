@@ -183,6 +183,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import {
+    addMovies,
     chooseServer,
     getServers,
     getUsers,
@@ -204,7 +205,12 @@ export default class Home extends Vue {
     servers = [];
     selectedServer = "";
     imdb = "";
-    movies = [];
+    movies = [
+        {
+            title: "Inception",
+            year: 2008,
+        },
+    ];
     playlist = "";
     users = [
         "albin.tystrand@gmail.com",
@@ -274,6 +280,7 @@ export default class Home extends Vue {
 
             await chooseServer(this.selectedServer);
         } else if (this.current === 3) {
+            // scrape imdb and choose users
             if (!this.imdb) {
                 this.loading = false;
                 return;
@@ -297,6 +304,21 @@ export default class Home extends Vue {
 
             this.users = users.data;
             this.movies = response.data;
+        } else if (this.current === 4) {
+            // add movies
+            const response = (await addMovies(
+                this.movies,
+                this.playlist,
+                this.users
+            )) as RequestResponse;
+
+            if (!response.success) {
+                this.errorMessage = response.errorMessage!;
+                this.loading = false;
+                return;
+            }
+
+            console.log(response);
         }
 
         this.current++;

@@ -111,10 +111,40 @@ export const scrapeImdb = async (id: string): Promise<RequestResponse> => {
     }
 };
 
-export const getUsers = async (
-): Promise<RequestResponse> => {
+export const getUsers = async (): Promise<RequestResponse> => {
     try {
         const response = await instance.get(`get-users`);
+
+        const requestResponse: RequestResponse = {
+            data: response.data,
+            errorCode: null,
+            errorMessage: null,
+            success: true,
+        };
+        return requestResponse;
+    } catch (error) {
+        const requestResponse: RequestResponse = {
+            data: null,
+            errorCode: error.response.status,
+            errorMessage: error.response.data.error,
+            success: false,
+        };
+
+        return requestResponse;
+    }
+};
+
+export const addMovies = async (
+    movies: string[],
+    name: string,
+    users: string[]
+): Promise<RequestResponse> => {
+    try {
+        const response = await instance.post(`/add-movies`, {
+            movies,
+            name,
+            users,
+        });
 
         const requestResponse: RequestResponse = {
             data: response.data,
