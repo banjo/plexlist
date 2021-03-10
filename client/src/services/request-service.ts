@@ -1,4 +1,4 @@
-import { RequestResponse } from "@/models/interfaces";
+import { Movie, RequestResponse } from "@/models/interfaces";
 import axios from "axios";
 
 const URL = "http://localhost:5000";
@@ -13,7 +13,7 @@ export const login = async (
     password: string
 ): Promise<RequestResponse> => {
     try {
-        const response = await instance.post(`sign-in`, {
+        const response = await instance.post(`/sign-in`, {
             username,
             password,
         });
@@ -38,7 +38,7 @@ export const login = async (
 
 export const getServers = async (): Promise<RequestResponse> => {
     try {
-        const response = await instance.get(`get-servers`);
+        const response = await instance.get(`/get-servers`);
 
         const requestResponse: RequestResponse = {
             data: response.data,
@@ -63,7 +63,7 @@ export const chooseServer = async (
     server: string
 ): Promise<RequestResponse> => {
     try {
-        const response = await instance.post(`choose-server`, {
+        const response = await instance.post(`/choose-server`, {
             server,
         });
 
@@ -88,7 +88,7 @@ export const chooseServer = async (
 
 export const scrapeImdb = async (id: string): Promise<RequestResponse> => {
     try {
-        const response = await instance.post(`scrape-imdb`, {
+        const response = await instance.post(`/scrape-imdb`, {
             id,
         });
 
@@ -113,7 +113,7 @@ export const scrapeImdb = async (id: string): Promise<RequestResponse> => {
 
 export const getUsers = async (): Promise<RequestResponse> => {
     try {
-        const response = await instance.get(`get-users`);
+        const response = await instance.get(`/get-users`);
 
         const requestResponse: RequestResponse = {
             data: response.data,
@@ -135,7 +135,7 @@ export const getUsers = async (): Promise<RequestResponse> => {
 };
 
 export const addMovies = async (
-    movies: string[],
+    movies: Movie[],
     name: string,
     users: string[]
 ): Promise<RequestResponse> => {

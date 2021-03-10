@@ -172,7 +172,7 @@ def add_movies():
     plex_server.connect()
     playlist, failed_movies = plex_server.add_playlist(name, movie_list)
 
-    if (len(users) > 0):
+    if (len(users) > 0 and playlist is not None):
         plex_server.copy_to_users(playlist, users)
 
     return jsonify(failed_movies)

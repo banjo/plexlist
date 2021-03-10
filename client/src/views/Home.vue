@@ -54,7 +54,7 @@
                 </div>
 
                 <div v-if="current === 3" class="input-fields">
-                    <h1>Select IMDB list</h1>
+                    <h1>IMDb</h1>
 
                     <input
                         class="input"
@@ -75,7 +75,7 @@
                         data-toggle="modal"
                         data-target="#movieModal"
                     >
-                        See all movies
+                        See all movies ({{ movies.length }})
                     </button>
 
                     <input
@@ -108,7 +108,23 @@
                                 {{ user }}
                             </label>
                         </div>
+                        <button class="btn secondary" @click="selectAllUsers">
+                            Select all users
+                        </button>
                     </div>
+                </div>
+
+                <div v-if="current === 5" class="input-fields">
+                    <h1>Success!</h1>
+                    <button
+                        v-if="failedMovies.length > 0"
+                        type="button"
+                        class="btn error"
+                        data-toggle="modal"
+                        data-target="#failedMovieModal"
+                    >
+                        Failed movies ({{ failedMovies.length }})
+                    </button>
                 </div>
             </div>
 
@@ -132,7 +148,7 @@
             </button>
         </div>
 
-        <!-- Modal -->
+        <!-- All Movies modal -->
         <div
             class="modal fade"
             id="movieModal"
@@ -177,6 +193,54 @@
                 </div>
             </div>
         </div>
+
+        <!-- Failed movies modal -->
+        <div
+            class="modal fade"
+            id="failedMovieModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="failedMovieModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="failedMovieModalLabel">
+                            Movies
+                        </h5>
+                        <button
+                            type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                        >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            <li
+                                class="list-group-item"
+                                v-for="(movie, index) of failedMovies"
+                                :key="index"
+                            >
+                                {{ movie }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-dismiss="modal"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -197,7 +261,7 @@ import { RequestResponse } from "../models/interfaces";
 })
 export default class Home extends Vue {
     steps = 5;
-    current = 4;
+    current = 1;
     loading = false;
 
     username = "";
@@ -205,29 +269,11 @@ export default class Home extends Vue {
     servers = [];
     selectedServer = "";
     imdb = "";
-    movies = [
-        {
-            title: "Inception",
-            year: 2008,
-        },
-    ];
+    movies = [];
     playlist = "";
-    users = [
-        "albin.tystrand@gmail.com",
-        "corderoy.pihl@gmail.com",
-        "daave.olsson@gmail.com",
-        "emhj0516@fridaskolan.se",
-        "emilsvensson99@hotmail.com",
-        "Evelina.odman@gmail.com",
-        "harald.brandelius@gmail.com",
-        "Jacob.c.westman@gmail.com",
-        "johaan.westerlund@gmail.com",
-        "rob.trollhattan@gmail.com",
-        "sarajuliawestman@gmail.com",
-        "stuganibokenaset@gmail.com",
-        "viktor@kopperod.se",
-    ];
+    users = [];
     selectedUsers = [];
+    failedMovies = [];
 
     errorMessage = "";
 
@@ -243,11 +289,17 @@ export default class Home extends Vue {
         return this.current === this.steps;
     }
 
+    selectAllUsers() {
+        if (this.selectedUsers === this.users) {
+            this.selectedUsers = [];
+            return;
+        }
+        this.selectedUsers = this.users;
+    }
+
     async next() {
         this.errorMessage = "";
         this.loading = true;
-
-        console.log(this.selectedUsers);
 
         // login
         if (this.current === 1) {
@@ -318,7 +370,7 @@ export default class Home extends Vue {
                 return;
             }
 
-            console.log(response);
+            this.failedMovies = response.data;
         }
 
         this.current++;
@@ -372,8 +424,8 @@ export default class Home extends Vue {
     margin: var(--size-small1) 0;
     padding: var(--size-small3);
     border-radius: var(--radius);
-    color: #d8000c;
-    background-color: #ffbaba;
+    color: var(--clr-light);
+    background-color: var(--clr-error);
     width: 70%;
 }
 
@@ -472,6 +524,10 @@ body {
 
 .secondary {
     background-color: var(--clr-secondary);
+}
+
+.error {
+    background-color: var(--clr-error);
 }
 
 .btn:active {
